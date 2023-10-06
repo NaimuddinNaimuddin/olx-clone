@@ -31,14 +31,13 @@ function AddProduct() {
         const url = 'http://localhost:4000/add-product';
         axios.post(url, formData)
             .then((res) => {
-                console.log(res)
                 if (res.data.message) {
                     alert(res.data.message);
                     navigate('/')
                 }
             })
             .catch((err) => {
-                console.log(err)
+                alert('server err')
             })
 
     }
