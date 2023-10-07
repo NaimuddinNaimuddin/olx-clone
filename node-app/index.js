@@ -26,16 +26,33 @@ const mongoose = require('mongoose');
 
 mongoose.connect('mongodb+srv://naimu:naimu123@cluster0.t6uhb.mongodb.net/?retryWrites=true&w=majority')
 
-const Users = mongoose.model('Users', { username: String, password: String });
+const Users = mongoose.model('Users', {
+    username: String,
+    password: String,
+    likedProducts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Products' }]
+});
+
 const Products = mongoose.model('Products', { pname: String, pdesc: String, price: String, category: String, pimage: String });
 
 app.get('/', (req, res) => {
     res.send('hello...')
 })
 
+app.post('/like-product', (req, res) => {
+    let productId = req.body.productId;
+    let userId = req.body.userId;
+
+    Users.updateOne({ _id: userId }, { $addToSet: { likedProducts: productId } })
+        .then(() => {
+            res.send({ message: 'liked success.' })
+        })
+        .catch(() => {
+            res.send({ message: 'server err' })
+        })
+
+})
+
 app.post('/add-product', upload.single('pimage'), (req, res) => {
-    console.log(req.body);
-    console.log(req.file.path);
     const pname = req.body.pname;
     const pdesc = req.body.pdesc;
     const price = req.body.price;
@@ -56,7 +73,6 @@ app.get('/get-products', (req, res) => {
 
     Products.find()
         .then((result) => {
-            console.log(result, "user data")
             res.send({ message: 'success', products: result })
 
         })
@@ -66,9 +82,33 @@ app.get('/get-products', (req, res) => {
 
 })
 
+app.get('/get-product/:pId', (req, res) => {
+    console.log(req.params);
+
+    Products.findOne({ _id: req.params.pId })
+        .then((result) => {
+            res.send({ message: 'success', product: result })
+        })
+        .catch((err) => {
+            res.send({ message: 'server err' })
+        })
+
+})
+
+app.post('/liked-products', (req, res) => {
+
+    Users.findOne({ _id: req.body.userId }).populate('likedProducts')
+        .then((result) => {
+            res.send({ message: 'success', products: result.likedProducts })
+        })
+        .catch((err) => {
+            res.send({ message: 'server err' })
+        })
+
+})
+
 
 app.post('/signup', (req, res) => {
-    console.log(req.body);
     const username = req.body.username;
     const password = req.body.password;
     const user = new Users({ username: username, password: password });
@@ -84,13 +124,11 @@ app.post('/signup', (req, res) => {
 
 
 app.post('/login', (req, res) => {
-    console.log(req.body);
     const username = req.body.username;
     const password = req.body.password;
 
     Users.findOne({ username: username })
         .then((result) => {
-            console.log(result, "user data")
             if (!result) {
                 res.send({ message: 'user not found.' })
             } else {
@@ -98,7 +136,7 @@ app.post('/login', (req, res) => {
                     const token = jwt.sign({
                         data: result
                     }, 'MYKEY', { expiresIn: '1h' });
-                    res.send({ message: 'find success.', token: token })
+                    res.send({ message: 'find success.', token: token, userId: result._id })
                 }
                 if (result.password != password) {
                     res.send({ message: 'password wrong.' })
