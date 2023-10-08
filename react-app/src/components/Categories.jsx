@@ -4,6 +4,7 @@ import categories from './CategoriesList';
 
 function Categories(props) {
 
+    const navigate = useNavigate();
 
     return (
         <div className='cat-container'>
@@ -12,7 +13,7 @@ function Categories(props) {
                 {categories && categories.length > 0 &&
                     categories.map((item, index) => {
                         return (
-                            <span onClick={() => props.handleCategory && props.handleCategory(item)} key={index} className='category'> {item} </span>
+                            <span onClick={() => navigate('/category/' + item)} key={index} className='category'> {item} </span>
                         )
                     })}
             </div>

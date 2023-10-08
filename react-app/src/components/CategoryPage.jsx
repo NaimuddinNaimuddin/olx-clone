@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
 import Header from "./Header";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useParams } from "react-router-dom";
 import axios from "axios";
 import Categories from "./Categories";
 import { FaHeart } from "react-icons/fa";
 import './Home.css';
 
 
-function Home() {
+function CategoryPage() {
 
     const navigate = useNavigate()
+
+    const param = useParams()
+    console.log(param);
 
     const [products, setproducts] = useState([]);
     const [cproducts, setcproducts] = useState([]);
@@ -23,7 +26,7 @@ function Home() {
     // }, [])
 
     useEffect(() => {
-        const url = 'http://localhost:4000/get-products';
+        const url = 'http://localhost:4000/get-products?catName=' + param.catName;
         axios.get(url)
             .then((res) => {
                 if (res.data.products) {
@@ -33,7 +36,7 @@ function Home() {
             .catch((err) => {
                 alert('Server Err.')
             })
-    }, [])
+    }, [param])
 
     const handlesearch = (value) => {
         setsearch(value);
@@ -147,4 +150,4 @@ function Home() {
     )
 }
 
-export default Home;
+export default CategoryPage;

@@ -13,11 +13,16 @@ import Signup from './components/Signup';
 import AddProduct from './components/AddProduct';
 import LikedProducts from './components/LikedProducts';
 import ProductDetail from './components/ProductDetail';
+import CategoryPage from './components/CategoryPage';
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: (<Home />),
+  },
+  {
+    path: "/category/:catName",
+    element: (<CategoryPage />),
   },
   {
     path: "about",
