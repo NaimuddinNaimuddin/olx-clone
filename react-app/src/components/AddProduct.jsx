@@ -23,26 +23,32 @@ function AddProduct() {
 
     const handleApi = () => {
 
-        const formData = new FormData();
-        formData.append('pname', pname)
-        formData.append('pdesc', pdesc)
-        formData.append('price', price)
-        formData.append('category', category)
-        formData.append('pimage', pimage)
-        formData.append('pimage2', pimage2)
-        formData.append('userId', localStorage.getItem('userId'))
+        navigator.geolocation.getCurrentPosition((position) => {
+            const formData = new FormData();
+            formData.append('plat', position.coords.latitude)
+            formData.append('plong', position.coords.longitude)
+            formData.append('pname', pname)
+            formData.append('pdesc', pdesc)
+            formData.append('price', price)
+            formData.append('category', category)
+            formData.append('pimage', pimage)
+            formData.append('pimage2', pimage2)
+            formData.append('userId', localStorage.getItem('userId'))
 
-        const url = 'http://localhost:4000/add-product';
-        axios.post(url, formData)
-            .then((res) => {
-                if (res.data.message) {
-                    alert(res.data.message);
-                    navigate('/')
-                }
-            })
-            .catch((err) => {
-                alert('server err')
-            })
+            const url = 'http://localhost:4000/add-product';
+            axios.post(url, formData)
+                .then((res) => {
+                    if (res.data.message) {
+                        alert(res.data.message); 
+                        navigate('/')
+                    }
+                })
+                .catch((err) => {
+                    alert('server err')
+                })
+        })
+
+
 
     }
 
