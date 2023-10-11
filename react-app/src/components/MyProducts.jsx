@@ -1,23 +1,19 @@
 import { useEffect, useState } from "react";
 import Header from "./Header";
-import { useNavigate, Link, useParams } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import Categories from "./Categories";
 import { FaHeart } from "react-icons/fa";
 import './Home.css';
 
 
-function CategoryPage() {
+function MyProducts() {
 
     const navigate = useNavigate()
-
-    const param = useParams()
-    console.log(param);
 
     const [products, setproducts] = useState([]);
     const [cproducts, setcproducts] = useState([]);
     const [search, setsearch] = useState('');
-    const [issearch, setissearch] = useState(false);
 
     // useEffect(() => {
     //     if (!localStorage.getItem('token')) {
@@ -26,8 +22,9 @@ function CategoryPage() {
     // }, [])
 
     useEffect(() => {
-        const url = 'http://localhost:4000/get-products?catName=' + param.catName;
-        axios.get(url)
+        const url = 'http://localhost:4000/my-products';
+        let data = { userId: localStorage.getItem('userId') }
+        axios.post(url, data)
             .then((res) => {
                 if (res.data.products) {
                     setproducts(res.data.products);
@@ -36,32 +33,21 @@ function CategoryPage() {
             .catch((err) => {
                 alert('Server Err.')
             })
-    }, [param])
+    }, [])
 
     const handlesearch = (value) => {
         setsearch(value);
     }
 
     const handleClick = () => {
-
-        const url = 'http://localhost:4000/search?search=' + search + '&loc=' + localStorage.getItem('userLoc');
-        axios.get(url)
-            .then((res) => {
-                setcproducts(res.data.products);
-                setissearch(true);
-            })
-            .catch((err) => {
-                alert('Server Err.')
-            })
-
-        // let filteredProducts = products.filter((item) => {
-        //     if (item.pname.toLowerCase().includes(search.toLowerCase()) ||
-        //         item.pdesc.toLowerCase().includes(search.toLowerCase()) ||
-        //         item.category.toLowerCase().includes(search.toLowerCase())) {
-        //         return item;
-        //     }
-        // })
-        // setcproducts(filteredProducts)
+        let filteredProducts = products.filter((item) => {
+            if (item.pname.toLowerCase().includes(search.toLowerCase()) ||
+                item.pdesc.toLowerCase().includes(search.toLowerCase()) ||
+                item.category.toLowerCase().includes(search.toLowerCase())) {
+                return item;
+            }
+        })
+        setcproducts(filteredProducts)
 
     }
 
@@ -92,22 +78,12 @@ function CategoryPage() {
     }
 
 
-    const handleProduct = (id) => {
-        navigate('/product/' + id)
-    }
-
-
     return (
         <div>
             <Header search={search} handlesearch={handlesearch} handleClick={handleClick} />
             <Categories handleCategory={handleCategory} />
-            {issearch && cproducts &&
-                <h5> SEARCH RESULTS
-                    <button className="clear-btn" onClick={() => setissearch(false)}> CLEAR </button>
-                </h5>}
-
-            {issearch && cproducts && cproducts.length == 0 && <h5> No Results Found </h5>}
-            {issearch && <div className="d-flex justify-content-center flex-wrap">
+          
+            <div className="d-flex justify-content-center flex-wrap">
                 {cproducts && products.length > 0 &&
                     cproducts.map((item, index) => {
 
@@ -125,29 +101,33 @@ function CategoryPage() {
                         )
 
                     })}
-            </div>}
+            </div>
 
-            {!issearch && <div className="d-flex justify-content-center flex-wrap">
+            <h5> ALL RESULTS  </h5>
+
+            <div className="d-flex justify-content-center flex-wrap">
                 {products && products.length > 0 &&
                     products.map((item, index) => {
 
                         return (
-                            <div onClick={() => handleProduct(item._id)} key={item._id} className="card m-3">
+                            <div key={item._id} className="card m-3 ">
                                 <div onClick={() => handleLike(item._id)} className="icon-con">
                                     <FaHeart className="icons" />
                                 </div>
-                                <img width="250px" height="150px" src={'http://localhost:4000/' + item.pimage} />
-                                <h3 className="m-2 price-text"> Rs. {item.price} /- </h3>
+                                <img width="300px" height="200px" src={'http://localhost:4000/' + item.pimage} />
                                 <p className="m-2"> {item.pname}  | {item.category} </p>
+                                <h3 className="m-2 text-danger"> {item.price} </h3>
                                 <p className="m-2 text-success"> {item.pdesc} </p>
                             </div>
                         )
 
                     })}
-            </div>}
+            </div>
+
+
 
         </div>
     )
 }
 
-export default CategoryPage;
+export default MyProducts;

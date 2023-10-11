@@ -14,6 +14,8 @@ import AddProduct from './components/AddProduct';
 import LikedProducts from './components/LikedProducts';
 import ProductDetail from './components/ProductDetail';
 import CategoryPage from './components/CategoryPage';
+import MyProducts from './components/MyProducts';
+import MyProfile from './components/MyProfile';
 
 const router = createBrowserRouter([
   {
@@ -45,8 +47,16 @@ const router = createBrowserRouter([
     element: (<LikedProducts />),
   },
   {
+    path: "/my-products",
+    element: (<MyProducts />),
+  },
+  {
     path: "/product/:productId",
     element: (<ProductDetail />),
+  },
+  {
+    path: "/my-profile",
+    element: (<MyProfile />),
   },
 ]);
 

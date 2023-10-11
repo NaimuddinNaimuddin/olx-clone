@@ -105,7 +105,13 @@ function Header(props) {
                     <div>
                         {!!localStorage.getItem('token') &&
                             <Link to="/liked-products">
-                                <button className="logout-btn">LIKED PRODUCTS  </button>
+                                <button className="logout-btn"> FAVOURITES  </button>
+                            </Link>}
+                    </div>
+                    <div>
+                        {!!localStorage.getItem('token') &&
+                            <Link to="/my-products">
+                                <button className="logout-btn">MY ADS  </button>
                             </Link>}
                     </div>
                     <div>
