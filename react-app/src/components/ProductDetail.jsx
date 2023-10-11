@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import Header from "./Header";
+import API_URL from "../constants";
 
 function ProductDetail() {
 
@@ -11,7 +12,7 @@ function ProductDetail() {
     const p = useParams()
 
     useEffect(() => {
-        const url = 'http://localhost:4000/get-product/' + p.productId;
+        const url = API_URL + '/get-product/' + p.productId;
         axios.get(url)
             .then((res) => {
                 if (res.data.product) {
@@ -26,7 +27,7 @@ function ProductDetail() {
 
     const handleContact = (addedBy) => {
         console.log('id', addedBy)
-        const url = 'http://localhost:4000/get-user/' + addedBy;
+        const url = API_URL + '/get-user/' + addedBy;
         axios.get(url)
             .then((res) => {
                 if (res.data.user) {
@@ -44,8 +45,8 @@ function ProductDetail() {
         <div >
             {product && <div className="d-flex justify-content-between flex-wrap">
                 <div>
-                    <img width="400px" height="200px" src={'http://localhost:4000/' + product.pimage} alt="" />
-                    {product.pimage2 && <img width="400px" height="200px" src={'http://localhost:4000/' + product.pimage2} alt="" />}
+                    <img width="400px" height="200px" src={API_URL + '/' + product.pimage} alt="" />
+                    {product.pimage2 && <img width="400px" height="200px" src={API_URL + '/' + product.pimage2} alt="" />}
                     <h6> Product Details : </h6>
                     {product.pdesc}
                 </div>

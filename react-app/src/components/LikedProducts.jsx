@@ -5,6 +5,7 @@ import axios from "axios";
 import Categories from "./Categories";
 import { FaHeart } from "react-icons/fa";
 import './Home.css';
+import API_URL from "../constants";
 
 
 function LikedProducts() {
@@ -22,7 +23,7 @@ function LikedProducts() {
     // }, [])
 
     useEffect(() => {
-        const url = 'http://localhost:4000/liked-products';
+        const url = API_URL + '/liked-products';
         let data = { userId: localStorage.getItem('userId') }
         axios.post(url, data)
             .then((res) => {
@@ -63,7 +64,7 @@ function LikedProducts() {
     const handleLike = (productId) => {
         let userId = localStorage.getItem('userId');
 
-        const url = 'http://localhost:4000/like-product';
+        const url = API_URL + '/like-product';
         const data = { userId, productId }
         axios.post(url, data)
             .then((res) => {
@@ -92,7 +93,7 @@ function LikedProducts() {
                                 <div onClick={() => handleLike(item._id)} className="icon-con">
                                     <FaHeart className="icons" />
                                 </div>
-                                <img width="300px" height="200px" src={'http://localhost:4000/' + item.pimage} />
+                                <img width="300px" height="200px" src={API_URL + '/' + item.pimage} />
 
                                 <p className="m-2"> {item.pname}  | {item.category} </p>
                                 <h3 className="m-2 text-danger"> {item.price} </h3>
@@ -114,7 +115,7 @@ function LikedProducts() {
                                 <div onClick={() => handleLike(item._id)} className="icon-con">
                                     <FaHeart className="icons" />
                                 </div>
-                                <img width="300px" height="200px" src={'http://localhost:4000/' + item.pimage} />
+                                <img width="300px" height="200px" src={API_URL + '/' + item.pimage} />
                                 <p className="m-2"> {item.pname}  | {item.category} </p>
                                 <h3 className="m-2 text-danger"> {item.price} </h3>
                                 <p className="m-2 text-success"> {item.pdesc} </p>
