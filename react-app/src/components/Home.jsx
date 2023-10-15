@@ -13,6 +13,9 @@ function Home() {
     const navigate = useNavigate()
 
     const [products, setproducts] = useState([]);
+    const [likedproducts, setlikedproducts] = useState([]);
+    const [refresh, setrefresh] = useState(false);
+    console.log(likedproducts);
     const [cproducts, setcproducts] = useState([]);
     const [search, setsearch] = useState('');
     const [issearch, setissearch] = useState(false);
@@ -34,7 +37,20 @@ function Home() {
             .catch((err) => {
                 alert('Server Err.')
             })
-    }, [])
+
+        const url2 = API_URL + '/liked-products';
+        let data = { userId: localStorage.getItem('userId') }
+
+        axios.post(url2, data)
+            .then((res) => {
+                if (res.data.products) {
+                    setlikedproducts(res.data.products);
+                }
+            })
+            .catch((err) => {
+                alert('Server Err.')
+            })
+    }, [refresh])
 
     const handlesearch = (value) => {
         setsearch(value);
@@ -86,7 +102,32 @@ function Home() {
         axios.post(url, data)
             .then((res) => {
                 if (res.data.message) {
-                    alert('Liked.')
+                    // alert('Liked.')
+                    setrefresh(!refresh)
+                }
+            })
+            .catch((err) => {
+                alert('Server Err.')
+            })
+
+    }
+
+    const handleDisLike = (productId, e) => {
+        e.stopPropagation();
+        let userId = localStorage.getItem('userId');
+
+        if (!userId) {
+            alert('Please Login first.')
+            return;
+        }
+
+        const url = API_URL + '/dislike-product';
+        const data = { userId, productId }
+        axios.post(url, data)
+            .then((res) => {
+                if (res.data.message) {
+                    // alert('DisLiked.')
+                    setrefresh(!refresh)
                 }
             })
             .catch((err) => {
@@ -137,8 +178,13 @@ function Home() {
 
                         return (
                             <div onClick={() => handleProduct(item._id)} key={item._id} className="card m-3">
-                                <div onClick={(e) => handleLike(item._id, e)} className="icon-con">
-                                    <FaHeart className="icons" />
+                                <div className="icon-con">
+                                    {
+                                        likedproducts.find((likedItem) => likedItem._id == item._id) ?
+                                            <FaHeart onClick={(e) => handleDisLike(item._id, e)} className="red-icons" /> :
+                                            <FaHeart onClick={(e) => handleLike(item._id, e)} className="icons" />
+
+                                    }
                                 </div>
                                 <img width="250px" height="150px" src={API_URL + '/' + item.pimage} />
                                 <h3 className="m-2 price-text"> Rs. {item.price} /- </h3>

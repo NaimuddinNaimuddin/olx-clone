@@ -12,7 +12,7 @@ function AddProduct() {
     const [pdesc, setpdesc] = useState('');
     const [price, setprice] = useState('');
     const [category, setcategory] = useState('');
-    const [pimage, setpimage] = useState('');
+    const [pimage, setpimage] = useState('http://localhost:4000/uploads\pimage-1696526270474-101533743');
     const [pimage2, setpimage2] = useState('');
 
 
@@ -36,11 +36,11 @@ function AddProduct() {
             formData.append('pimage2', pimage2)
             formData.append('userId', localStorage.getItem('userId'))
 
-            const url =  API_URL + '/add-product';
+            const url = API_URL + '/add-product';
             axios.post(url, formData)
                 .then((res) => {
                     if (res.data.message) {
-                        alert(res.data.message); 
+                        alert(res.data.message);
                         navigate('/')
                     }
                 })
@@ -85,6 +85,7 @@ function AddProduct() {
                 </select>
                 <label> Product Image </label>
                 <input className="form-control" type="file"
+                    files={pimage}
                     onChange={(e) => {
                         setpimage(e.target.files[0])
                     }} />

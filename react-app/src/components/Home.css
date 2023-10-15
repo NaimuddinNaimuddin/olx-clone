@@ -6,8 +6,16 @@
     cursor: pointer;
 }
 
-.icons:hover {
+.red-icons {
+    font-size: 32px;
+    height: 32px;
+    width: 32px;
     color: red;
+    cursor: pointer;
+}
+
+.icons:hover {
+    color: #aaa;
 }
 
 .icon-con {
