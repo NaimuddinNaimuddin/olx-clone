@@ -3,6 +3,8 @@ const cors = require('cors')
 const path = require('path');
 var jwt = require('jsonwebtoken');
 const multer = require('multer')
+const http = require('http');
+const { Server } = require("socket.io");
 const productController = require('./controllers/productController');
 const userController = require('./controllers/userController');
 
@@ -19,6 +21,13 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 const bodyParser = require('body-parser')
 const app = express()
+const httpServer = http.createServer(app)
+const io = new Server(httpServer, {
+    cors: {
+        origin: '*'
+    }
+})
+
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(cors());
 app.use(bodyParser.json());
@@ -47,6 +56,19 @@ app.get('/my-profile/:userId', userController.myProfileById)
 app.get('/get-user/:uId', userController.getUserById)
 app.post('/login', userController.login)
 
-app.listen(port, () => {
+let messages = [];
+
+io.on('connection', (socket) => {
+    console.log('Socket Connected', socket.id)
+
+    socket.on('sendMsg', (data) => {
+        messages.push(data);
+        io.emit('getMsg', messages)
+    })
+
+    io.emit('getMsg', messages)
+})
+
+httpServer.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })

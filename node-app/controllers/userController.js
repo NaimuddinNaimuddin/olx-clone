@@ -105,7 +105,7 @@ module.exports.login = (req, res) => {
                     const token = jwt.sign({
                         data: result
                     }, 'MYKEY', { expiresIn: '1h' });
-                    res.send({ message: 'find success.', token: token, userId: result._id })
+                    res.send({ message: 'find success.', token: token, userId: result._id, username: result.username })
                 }
                 if (result.password != password) {
                     res.send({ message: 'password wrong.' })
