@@ -15,6 +15,7 @@ function MyProducts() {
     const [products, setproducts] = useState([]);
     const [cproducts, setcproducts] = useState([]);
     const [search, setsearch] = useState('');
+    const [refresh, setrefresh] = useState(false);
 
     // useEffect(() => {
     //     if (!localStorage.getItem('token')) {
@@ -34,7 +35,7 @@ function MyProducts() {
             .catch((err) => {
                 alert('Server Err.')
             })
-    }, [])
+    }, [refresh])
 
     const handlesearch = (value) => {
         setsearch(value);
@@ -78,6 +79,29 @@ function MyProducts() {
 
     }
 
+    const handleDel = (pid) => {
+        if (!localStorage.getItem('userId')) {
+            alert('Please Login First')
+            return;
+        }
+        const url = API_URL + '/delete-product';
+        const data = {
+            pid,
+            userId: localStorage.getItem('userId')
+        }
+        axios.post(url, data)
+            .then((res) => {
+                if (res.data.message) {
+                    alert('Delete Sucess.')
+                    setrefresh(!refresh)
+                }
+            })
+            .catch((err) => {
+                alert('Server Err.')
+            })
+
+
+    }
 
     return (
         <div>
@@ -119,6 +143,10 @@ function MyProducts() {
                                 <p className="m-2"> {item.pname}  | {item.category} </p>
                                 <h3 className="m-2 text-danger"> {item.price} </h3>
                                 <p className="m-2 text-success"> {item.pdesc} </p>
+                                <p className="m-2 text-success">
+                                    <Link to={`/edit-product/${item._id}`} >  Edit Product </Link>
+                                </p>
+                                <button onClick={() => handleDel(item._id)} > Delete Product </button>
                             </div>
                         )
 
